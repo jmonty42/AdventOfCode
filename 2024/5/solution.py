@@ -2,7 +2,6 @@
 input_file = open('input.txt', 'r')
 
 page_dependencies = {} # page -> {pages it must be before}
-reverse_page_dependencies = {} # page -> {pages it must be after}
 
 sum = 0
 corrected_sum = 0
@@ -40,9 +39,6 @@ for line in input_file.readlines():
         if pages[0] not in page_dependencies:
             page_dependencies[pages[0]] = set()
         page_dependencies[pages[0]].add(pages[1])
-        if pages[1] not in reverse_page_dependencies:
-            reverse_page_dependencies[pages[1]] = set()
-        reverse_page_dependencies[pages[1]].add(pages[0])
     elif ',' in line:
         pages = [int(num) for num in line.split(',')]
         valid = check_correct_order(pages)
