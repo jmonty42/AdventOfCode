@@ -1,4 +1,4 @@
-from collections import defaultdict
+from datetime import datetime
 
 def move_files_and_get_checksum(disk_map: str) -> int:
     debug_output = []
@@ -126,5 +126,11 @@ if __name__=="__main__":
     input_file = open("input.txt", 'r')
     disk_map = input_file.readline()
     input_file.close()
-    print("Part 1: {}".format(move_files_and_get_checksum(disk_map)))
-    print("Part 2: {}".format(move_whole_files_and_get_checksum(disk_map)))
+    before = datetime.now()
+    checksum_part_1 = move_files_and_get_checksum(disk_map)
+    after = datetime.now()
+    print("Part 1: {} ({})".format(checksum_part_1, after-before))
+    before = datetime.now()
+    checksum_part_2 = move_whole_files_and_get_checksum(disk_map)
+    after = datetime.now()
+    print("Part 2: {} ({})".format(checksum_part_2, after-before))
