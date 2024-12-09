@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple, Set
 from collections import defaultdict
+from datetime import datetime
 
 def find_tower_locations(input_file_name: str) -> (Dict[str, List[Tuple[int, int]]], int, int):
     tower_locations = defaultdict(lambda: []) # frequency -> [(row, col)] - list of x,y pairs - want the order to stay the same for iterating
@@ -118,6 +119,8 @@ def find_antinode_count(
 if __name__=="__main__":
 
     tower_locations, max_row, max_col = find_tower_locations("input.txt")
+    before = datetime.now()
     part1_answer, part2_answer = find_antinode_count(tower_locations, max_row, max_col)
+    after = datetime.now()
     print("Part 1: {}".format(part1_answer))
-    print("Part 2: {}".format(part2_answer))
+    print("Part 2: {} ({})".format(part2_answer, after-before))
