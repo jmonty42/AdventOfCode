@@ -1,3 +1,4 @@
+from collections import defaultdict
 
 def move_files_and_get_checksum(disk_map: str) -> int:
     debug_output = []
@@ -48,7 +49,77 @@ def move_files_and_get_checksum(disk_map: str) -> int:
             sum += block_index * file_id
             block_index += 1
             debug_output.append(file_id)
-    print("".join([str(file_id) for file_id in debug_output]))
+    # print("".join([str(file_id) for file_id in debug_output]))
+    return sum
+
+def move_file(blocks: [int], from_block: int, to_block: int):
+    file_id = blocks[from_block]
+    from_index = from_block
+    to_index = to_block
+    blocks_moved = 0
+    while from_index < len(blocks) and blocks[from_index] == file_id:
+        blocks[to_index] = file_id
+        # doesn't matter what is put here as we move from right to left, so once a file is moved, nothing will be moved
+        # into its place, just has to be a negative number
+        blocks[from_index] = -1
+        blocks_moved += 1
+        from_index += 1
+        to_index += 1
+    if blocks[to_index] < 0: # negative number indicates free space
+        # need to update the remaining free space with the correct size for future moves
+        new_size = -blocks[to_index] - blocks_moved
+        for _ in range(new_size):
+            blocks[to_index] = -new_size
+            to_index += 1
+
+
+def move_whole_files_and_get_checksum(disk_map: str) -> int:
+    blocks = [] # I'm pretty sure I will have to actually move things around before computing the checksum this time
+    starting_block_for_file = []
+
+    # build out the disk map
+    for disk_index in range(len(disk_map)):
+        size = int(disk_map[disk_index])
+        if disk_index % 2:
+            # index is odd, signifying free space
+            for _ in range(size):
+                blocks.append(-size) # negative size will signify a free space of `size` blocks
+        else:
+            # index is even, signifying a file
+            file_id = disk_index // 2
+            starting_block_for_file.append(len(blocks))
+            for _ in range(size):
+                blocks.append(file_id)
+    # print(str(starting_block_for_file))
+    # print("".join([str(block) if block >= 0 else '.' for block in blocks]))
+
+    sum = 0
+
+    right_file_index = len(disk_map) - 1
+    if right_file_index % 2:
+        right_file_index -= 1
+
+    while right_file_index >= 0:
+        file_id = right_file_index // 2
+        file_size = int(disk_map[right_file_index])
+        for block_index in range(len(blocks)):
+            if blocks[block_index] < 0:
+                free_blocks = -blocks[block_index]
+                if free_blocks >= file_size:
+                    move_file(blocks, starting_block_for_file[file_id], block_index)
+                    for _ in range(file_size):
+                        sum += block_index * file_id
+                        block_index += 1
+                    break
+            elif blocks[block_index] == file_id:
+                for _ in range(file_size):
+                    sum += block_index * file_id
+                    block_index += 1
+                break
+        right_file_index -= 2
+
+    # print("".join([str(block) if block >= 0 else '.' for block in blocks]))
+
     return sum
 
 if __name__=="__main__":
@@ -56,3 +127,4 @@ if __name__=="__main__":
     disk_map = input_file.readline()
     input_file.close()
     print("Part 1: {}".format(move_files_and_get_checksum(disk_map)))
+    print("Part 2: {}".format(move_whole_files_and_get_checksum(disk_map)))
