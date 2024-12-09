@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Set, Tuple
+from datetime import datetime
 
 class Direction(Enum):
     UP = 1
@@ -65,6 +66,8 @@ map = input_file.readlines()
 
 input_file.close()
 
+before = datetime.now()
+
 starting_location = None
 
 for row in range(len(map)):
@@ -110,11 +113,13 @@ if starting_location in possible_obstacle_locations:
     print("Removing the starting location as a possible obstacle location.")
     possible_obstacle_locations.remove(starting_location)
 
+after = datetime.now()
+
 output_file = open('output.txt', 'w')
 
 # print(str(starting_location))
 for row in map:
     output_file.write(row)
 print("Part 1: {}".format(visited_count))
-print("Part 2: {}".format(len(possible_obstacle_locations)))
+print("Part 2: {} ({})".format(len(possible_obstacle_locations), after - before))
 # print("{}".format(possible_obstacle_locations))
