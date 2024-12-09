@@ -1,3 +1,4 @@
+from datetime import datetime
 
 def is_result_possible(numbers: [int], result: int, running_result: int) -> bool:
     if len(numbers) == 1:
@@ -23,6 +24,8 @@ def try_concatenation(numbers: [int], result: int, running_result: int) -> bool:
 
 input_file = open('input.txt', 'r')
 
+before = datetime.now()
+
 sum = 0
 part_2_sum = 0
 
@@ -37,7 +40,9 @@ for line in input_file.readlines():
     elif try_concatenation(numbers[1:], result, numbers[0]):
         part_2_sum += result
 
+after = datetime.now()
+
 input_file.close()
 
 print("Part 1: {}".format(sum))
-print("Part 2: {}".format(part_2_sum))
+print("Part 2: {} ({})".format(part_2_sum, after-before))
